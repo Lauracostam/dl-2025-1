@@ -14,40 +14,44 @@ class LogisticNeuron:
 
         ### START CODE HERE ###
         ### TODO
-        s = None
+        # s = None
         ### END CODE HERE ###
-        return s
+        # return s
+        return 1 / (1 + np.exp(-z))
     
     def predict_proba(self, X):
         ### START CODE HERE ###
         ### TODO
-        a = None
+        # a = None
         ### END CODE HERE ###
-        return a
+        # return a
+        z = np.dot(X, self.weights) + self.bias
+        return self.sigmoid(z)
     
     def predict(self, X):
-        prediction = None
+        prediction = (self.predict_proba(X) >= 0.5).astype(int)
         return prediction
     
     def train(self, X, y):
+        m = X.shape[0]
         for _ in range(self.epochs):
             ### START CODE HERE ###
-            ### TODO: Implement forward pass
-            y_pred = None
+            # TODO: Implement forward pass
+            y_pred = self.predict_proba(X)
 
-            ### TODO: Compute error
-            error = None
+            # TODO: Compute error
+            error = y_pred - y
 
-            ### TODO: Compute gradients
-            grad_w = None
-            grad_b = None
+            # TODO: Compute gradients
+            grad_w = (1/m) * np.dot(X.T, error)
+            grad_b = (1/m) * np.sum(error)
 
-            ### TODO: Update weights and bias
-            self.weights = None
-            self.bias = None
+            # TODO: Update weights and bias
+            self.weights -= self.learning_rate * grad_w
+            self.bias -= self.learning_rate * grad_b
 
-            ### TODO: Compute loss and append to loss_history
-            loss = None
+            # TODO: Compute loss and append to loss_history
+            loss = -np.mean(y * np.log(y_pred + 1e-8) + (1 - y) * np.log(1 - y_pred + 1e-8))
             self.loss_history.append(loss)
             ### END CODE HERE ###
 
@@ -89,6 +93,12 @@ def main():
 
     # Plot loss over training iterations
     plot_loss(neuron)
+
+    #acurácia
+    # y_pred_class = neuron.predict(X)
+    # accuracy = np.mean(y_pred_class == y)
+    # print(f"Acurácia: {accuracy * 100:.2f}%")
+
 
 if __name__ == "__main__":
 

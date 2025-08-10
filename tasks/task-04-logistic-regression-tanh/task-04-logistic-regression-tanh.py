@@ -13,44 +13,44 @@ class LogisticNeuron:
     def tanh(self, z):
         ### START CODE HERE ###
         ### TODO: implement the tanh activation
-        a = None
+        # a = None
         ### END CODE HERE ###
-        return a
+        # return a
+        return np.tanh(z)
 
     def predict_proba(self, X):
         ### START CODE HERE ###
         ### TODO: compute activation output using tanh
-        z = None
-        a = None
+        z = np.dot(X, self.weights) + self.bias
+        a = self.tanh(z)
         ### END CODE HERE ###
         return a
 
     def predict(self, X):
-        prediction = None
+        prediction = (self.predict_proba(X) >= 0).astype(int)
         return prediction
 
     def train(self, X, y):
         ### START CODE HERE ###
-        ### TODO: convert y from {0, 1} to {-1, +1}
-        y_tanh = y
+        m = X.shape[0]
+        y_tanh = 2*y - 1
 
         for _ in range(self.epochs):
             # Forward pass
-            y_pred = None
+            y_pred = self.predict_proba(X)
 
-            # Compute error
-            error = None
+            # Erro
+            error = y_pred - y_tanh
 
-            # Gradients
-            grad_w = None
-            grad_b = None
+            # Gradientes
+            grad_w = (1/m) * np.dot(X.T, error * (1 - y_pred**2))
+            grad_b = (1/m) * np.sum(error * (1 - y_pred**2))
 
-            # Update parameters
-            self.weights = None
-            self.bias = None
+            # Atualização dos parâmetros
+            self.weights -= self.learning_rate * grad_w
+            self.bias -= self.learning_rate * grad_b
 
-            # Compute MSE loss
-            loss = None
+            loss = np.mean(error**2)
             self.loss_history.append(loss)
         ### END CODE HERE ###
 
@@ -92,6 +92,11 @@ def main():
 
     # Plot loss over training iterations
     plot_loss(neuron)
+
+    #acurácia
+    # y_pred_class = neuron.predict(X)
+    # accuracy = np.mean(y_pred_class == y)
+    # print(f"Acurácia: {accuracy * 100:.2f}%")
 
 if __name__ == "__main__":
     main()
